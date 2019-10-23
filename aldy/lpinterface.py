@@ -193,7 +193,7 @@ class SCIP(Gurobi):
 			'minimize' if method == 'min' else 'maximize'
 		)
 		# self.model.params.timeLimit = 60
-		self.model.setRealParam('limits/time', 60*60)
+		self.model.setRealParam('limits/time', 10*60)
 		self.model.hideOutput()
 		self.model.optimize()
 
