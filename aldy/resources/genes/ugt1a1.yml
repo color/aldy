@@ -7,35 +7,19 @@ alleles:
     mutations: []
   UGT1A1*6:
     mutations:
-    - [175755, G>A, rs4148323, G71R]
+      - [175755, G>A, rs4148323, G71R]
   UGT1A1*27:
     mutations:
-    - [176230, C>A, rs35350960, P229Q]
-  UGT1A1*27_28_80:
-    mutations:
-    - [175181, C>T, rs887829, 5'UTR]
-    - [175491, insTA, rs3064744, Promoter]
-    - [176230, C>A, rs35350960, P229Q]
+      - [176230, C>A, rs35350960, P229Q]
   UGT1A1*28:
     mutations:
-    - [175491, insTA, rs3064744, Promoter]
-  UGT1A1*28_80:
-    mutations:
-    - [175181, C>T, rs887829, 5'UTR]
-    - [175491, insTA, rs3064744, Promoter]
+      - [175491, insTA, rs3064744, Promoter]
   UGT1A1*36:
     mutations:
-    - [175492, delTA, rs3064744_del, Promoter]
+      - [175492, delTA, rs3064744_del, Promoter]
   UGT1A1*37:
     mutations:
-    - [175491, insTATA, rs3064744, Promoter]
-  UGT1A1*37_80:
-    mutations:
-    - [175181, C>T, rs887829, 5'UTR]
-    - [175491, insTATA, rs3064744, Promoter]
-  UGT1A1*80:
-    mutations:
-    - [175181, C>T, rs887829, 5'UTR]
+      - [175491, insTATA, rs3064744, Promoter]
 structure:
   genes: [UGT1A1]
   regions:
@@ -66,11 +50,11 @@ reference:
     hg19: ['2', 234493390, 234683946, +, M190556]
     hg38: ['2', 233584744, 233775300, +, M190556]
   exons:
-  - [175544, 176408]
-  - [182290, 182422]
-  - [183105, 183193]
-  - [183476, 183696]
-  - [187518, 187816]
+    - [175544, 176408]
+    - [182290, 182422]
+    - [183105, 183193]
+    - [183476, 183696]
+    - [187518, 187816]
   seq: |-
     TGAAACAAGGCACCAGACCGATGGGGTGAGCCCACAGCAGAGGCCTACAGCTCTGTTTAGAATGAGGAAGCAGAGC
     AGGCTGAGAGAGGCAGCTCAGCAGAGTGCTTAGGCAAGCATAGGGCCACGACTCCCCACTGCAGGCAACATATCTG
