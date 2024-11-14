@@ -1,11 +1,22 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-from setuptools import setup, find_packages
-from setuptools.extension import Extension
 from Cython.Build import cythonize
+from Cython.Build.Dependencies import default_create_extension
+from Cython.Compiler import Options
 from Cython.Distutils import build_ext
 from pysam import get_include as pysam_get_include
+from setuptools import find_packages, setup
+from setuptools.extension import Extension
+
+
+def create_extention_no_metadata(template, kwds):
+    return default_create_extension(template, kwds)[0], None
+
+
+Options.docstrings = (
+    False  # Don't use Cython docstrings to keep files stable for hashing
+)
 
 extra_compile_args = ["-Wno-unused-function"]
 extensions = [
@@ -98,7 +109,14 @@ setup(
     packages=find_packages(),
     include_package_data=True,
     cmdclass={"build_ext": build_ext},
-    ext_modules=cythonize(extensions, compiler_directives={"language_level": "3"}),
+    ext_modules=cythonize(
+        extensions,
+        create_extension=create_extention_no_metadata,
+        compiler_directives={
+            "language_level": "3",
+            "emit_code_comments": False,
+        },
+    ),
     test_suite="pytest-runner",
     tests_require=["pytest"],
 )
