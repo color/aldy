@@ -735,6 +735,8 @@ alleles:
     activity: none
     mutations:
       - [CYP2C19, deletion]
+  # Unclear if functional, but we don't this to be ignored
+  #    ignored: true
   CYP2C19*37.001:
     ignored: true
     activity: none
@@ -754,7 +756,9 @@ alleles:
     ignored: true
     activity: none
     mutations:
-      - [CYP2C19, 'deletion:e1,i1,e2,i2,e3,i3,e4,i4,e5,i5,e6,i6,e7']
+      - [CYP2C19, deletion:e1, i1, e2, i2, e3, i3, e4, i4, e5, i5, e6, i6, e7"]
+  # note: skipped *37.005 (deletion CYP2C19 exon 1-7 & CYP2C18 exon 2-9) because
+  # it’s equivalent to *37.004 (deletion CYP2C19 exon 1-7 & CYP2C18 exon 5-9)
   CYP2C19*37.006:
     ignored: true
     activity: none

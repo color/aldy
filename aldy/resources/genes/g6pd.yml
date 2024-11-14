@@ -44,11 +44,6 @@ alleles:
     activity: deficient-iii
     mutations:
       - [19604, C>T, rs137852342, L342F]
-  G6PD*coimbra_shunde:
-    label: Coimbra Shunde
-    activity: deficient-ii
-    mutations:
-      - [18183, C>T, rs137852330, R198C]
   G6PD*gaohe:
     label: Gaohe
     activity: deficient-iii
@@ -70,15 +65,10 @@ alleles:
     mutations:
       - [19529, G>A, rs137852339, E317K]
   G6PD*maewo:
-    label: Union,Maewo, Chinese-2, Kalo
-    activity: deficient-ii
+    label: Union, Maewo, Chinese-2, Kalo
+    activity: II/Deficient
     mutations:
       - [20183, C>T, rs398123546, R454C]
-  G6PD*mahidol:
-    label: Mahidol
-    activity: deficient-iii
-    mutations:
-      - [18078, G>A, rs137852314, G163S]
   G6PD*malaga:
     label: Malaga
     activity: deficient-iii
@@ -89,26 +79,12 @@ alleles:
     activity: deficient-ii
     mutations:
       - [18154, C>T, rs5030868, S188F]
-  G6PD*mexico_city:
-    label: Mexico City
-    activity: deficient-iii
-    mutations:
-      - [18448, G>A, rs137852328, R227Q]
-  G6PD*namouru:
-    label: Namouru
-    activity: deficient-ii
-    mutations:
-      - [16577, T>C, rs137852349, Y70H]
-  G6PD*nanning:
-    label: Nanning
-    activity: deficient-iii
-    mutations:
-      - [18471, C>T, rs782757170, L235F]
   G6PD*orissa:
     label: Orissa
     activity: deficient-iii
     mutations:
       - [16405, C>G, rs78478128, A44G]
+  # also known as "Quing Yuan, Chinese-4"
   G6PD*quing_yan:
     label: Quing Yan
     activity: deficient-iii
@@ -125,11 +101,6 @@ alleles:
     mutations:
       - [17231, G>A, rs181277621, R104H]
       - [17296, A>G, rs1050829, N126D]
-  G6PD*taipei:
-    label: Taipei / Chinese-3
-    activity: deficient-ii
-    mutations:
-      - [18084, A>G, rs137852331, N165D]
   G6PD*ube_konan:
     label: Ube Konan
     activity: deficient-iii

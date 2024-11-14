@@ -18,11 +18,6 @@ alleles:
     activity: decreased
     mutations:
       - [175491, insTA, rs3064744, Promoter]
-  UGT1A1*28_80:
-    activity: decreased
-    mutations:
-      - [175181, C>T, rs887829, 5'UTR]
-      - [175491, insTA, rs3064744, Promoter]
   UGT1A1*36:
     activity: increased
     mutations:
@@ -31,14 +26,6 @@ alleles:
     activity: decreased
     mutations:
       - [175491, insTATA, rs3064744, Promoter]
-  UGT1A1*37_80:
-    activity: decreased
-    mutations:
-      - [175181, C>T, rs887829, 5'UTR]
-      - [175491, insTATA, rs3064744, Promoter]
-  UGT1A1*80:
-    mutations:
-      - [175181, C>T, rs887829, 5'UTR]
 structure:
   genes: [UGT1A1]
   regions:
