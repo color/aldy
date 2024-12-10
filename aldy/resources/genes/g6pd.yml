@@ -3,11 +3,11 @@ version: pharmgkb+pharmacoscan-r9
 generated: '2022-08-26'
 ensembl: ENSG00000160211
 alleles:
-  G6PD*A:
-    label: A
-    activity: IV/Normal
-    mutations:
-      - [17296, A>G, rs1050829, N126D]
+  # G6PD*A:
+  #   label: A
+  #   activity: IV/Normal
+  #   mutations:
+  #     - [17296, A>G, rs1050829, N126D]
   G6PD*A- 202A_376G:
     label: A- 202A_376G
     activity: III/Deficient
