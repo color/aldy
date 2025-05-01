@@ -331,7 +331,9 @@ class Profile:
             genome = "hg19"
         if len(regions) == 0:
             gene_regions = {}
-            for f in sorted(list(importlib.resources.files("aldy.resources.genes"))):
+            for f in sorted(
+                importlib.resources.files("aldy.resources.genes").iterdir()
+            ):
                 g = f.as_posix()
                 if not g.endswith(".yml"):
                     continue
