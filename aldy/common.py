@@ -5,7 +5,7 @@
 
 
 from typing import Iterable, Any, List
-import pkg_resources
+import importlib.resources
 import re
 import time
 import pprint
@@ -189,7 +189,7 @@ def pp(x) -> str:
     return pprint.pformat(x)
 
 
-def script_path(key: str) -> str:
+def script_path(module: str, resource: str) -> str:
     """
     Obtain the full path of a resource.
 
@@ -197,12 +197,8 @@ def script_path(key: str) -> str:
     :param key: resource to be extracted in `path/file` format
         (e.g., `aldy.resources/test.txt`).
     :returns: Full path of the resource.
-    :raises: :py:class:`aldy.common.AldyException` if the resource does not exist.
     """
-    components = key.split("/")
-    if len(components) < 2:
-        raise AldyException(f'"{key}"" is not valid resource name')
-    return pkg_resources.resource_filename(components[0], "/".join(components[1:]))
+    return (importlib.resources.files(module) / resource).as_posix()
 
 
 def colorize(text: str, color: str = "green") -> str:

@@ -7,7 +7,7 @@
 from typing import List, Optional, Any, Set, Dict
 import os
 import sys
-import pkg_resources
+import importlib.resources
 import datetime
 import time
 
@@ -98,7 +98,10 @@ def genotype(
 
     avail_genes = []
     if gene_db == "all":
-        avail_genes = pkg_resources.resource_listdir("aldy.resources", "genes")
+        avail_genes = [
+            p.as_posix()
+            for p in importlib.resources.files("aldy.resources.genes").iterdir()
+        ]
         avail_genes = [
             i[:-4]
             for i in avail_genes
@@ -106,9 +109,12 @@ def genotype(
         ]
         avail_genes = sorted(avail_genes)
     elif gene_db == "pharmacoscan":
-        avail_genes = pkg_resources.resource_listdir(
-            "aldy.resources.genes", "pharmacoscan"
-        )
+        avail_genes = [
+            p.as_posix()
+            for p in importlib.resources.files(
+                "aldy.resources.genes.pharmacoscan"
+            ).iterdir()
+        ]
         avail_genes = [
             f"pharmacoscan/{i[:-4]}" for i in avail_genes if i.endswith(".yml")
         ]
@@ -147,7 +153,7 @@ def genotype(
         return res
     else:
         db_file = script_path(
-            "aldy.resources.genes/{}.yml".format(avail_genes[0].lower())
+            "aldy.resources.genes", "{}.yml".format(avail_genes[0].lower())
         )
 
     # Load the gene specification
