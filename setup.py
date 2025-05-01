@@ -1,5 +1,4 @@
 #!/usr/bin/env python
-# -*- coding: utf-8 -*-
 
 from Cython.Build import cythonize
 from Cython.Build.Dependencies import default_create_extension
@@ -87,7 +86,7 @@ setup(
     name="aldy",
     version=__version__,
     description="A tool for allelic decomposition (haplotype reconstruction) "
-    + "and exact genotyping of highly polymorphic and structurally variant genes",
+    "and exact genotyping of highly polymorphic and structurally variant genes",
     url="http://aldy.csail.mit.edu/",
     author="Ibrahim Numanagić",
     author_email="inumanag@mit.edu",
@@ -104,7 +103,8 @@ setup(
         "mappy",
         "numpy",
         "cython",
-        "importlib_resources"
+        "setuptools; python_version>='3.12'",
+        "importlib_resources",
     ],
     entry_points={"console_scripts": ["aldy = aldy.__main__:console"]},
     packages=find_packages(),
