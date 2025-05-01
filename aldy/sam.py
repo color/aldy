@@ -750,7 +750,7 @@ class Sample:
         muts: dict = defaultdict(list)
 
         self._index = None
-        ref = script_path(f"aldy.resources.genes/{self.gene.name.lower()}.fa.gz")
+        ref = script_path("aldy.resources.genes", f"{self.gene.name.lower()}.fa.gz")
         if os.path.exists(ref):
             import mappy
 
@@ -792,9 +792,12 @@ class Sample:
 
             log.debug("[sam] PacBio remapping enabled")
 
-        with pysam.AlignmentFile(  # type: ignore
-            sam_path, reference_filename=reference
-        ) as sam, Timing("[sam] Remap"):
+        with (
+            pysam.AlignmentFile(  # type: ignore
+                sam_path, reference_filename=reference
+            ) as sam,
+            Timing("[sam] Remap"),
+        ):
             # Assumes SAM index exists
             self._prefix = chr_prefix(
                 self.gene.chr, [x["SN"] for x in sam.header["SQ"]]

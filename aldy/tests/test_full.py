@@ -106,7 +106,7 @@ CYP2D6 results:
 
 
 def test_NA10860(monkeypatch, solver):
-    file = script_path("aldy.tests.resources/NA10860.bam")
+    file = script_path("aldy.tests.resources", "NA10860.bam")
     assert_file(monkeypatch, file, solver, EXPECTED_NA10860)
 
 
@@ -121,7 +121,7 @@ def test_NA10860_debug(monkeypatch, solver):
     ./NA10860.log
     ./NA10860.yml
     """
-    file = script_path("aldy.tests.resources/NA10860.bam")
+    file = script_path("aldy.tests.resources", "NA10860.bam")
     with tmpfile(suffix=".tar.gz") as tmp:
         with tmpfile(mode="w") as out, tmpfile(mode="w") as out_log:
             out.close()
@@ -133,7 +133,7 @@ def test_NA10860_debug(monkeypatch, solver):
                 EXPECTED_NA10860 + "Preparing debug archive...",
                 {"--debug": tmp.name[:-7], "--log": out_log.name, "--output": out.name},
             )
-            with open(script_path("aldy.tests.resources/NA10860.out.expected")) as f:
+            with open(script_path("aldy.tests.resources", "NA10860.out.expected")) as f:
                 expected = f.read()
             with open(out.name) as f:
                 produced = f.read()
@@ -151,7 +151,7 @@ def test_NA10860_debug(monkeypatch, solver):
 
 
 def test_NA10860_hg38(monkeypatch, solver):
-    file = script_path("aldy.tests.resources/NA10860_hg38.bam")
+    file = script_path("aldy.tests.resources", "NA10860_hg38.bam")
     assert_file(
         monkeypatch, file, solver, EXPECTED_NA10860.replace("NA10860", "NA10860_hg38")
     )
@@ -200,7 +200,7 @@ def test_NA10860_gap(monkeypatch, solver):
         Estimated activity for *4.021: none (score: 0.0); evidence: D (see https://www.pharmvar.org/haplotype/2566 for details)
         Estimated activity for *4NX: none (score: 0.0); evidence: D (see https://www.pharmvar.org/haplotype/2559 for details)
     """
-    file = script_path("aldy.tests.resources/NA10860.bam")
+    file = script_path("aldy.tests.resources", "NA10860.bam")
     assert_file(monkeypatch, file, solver, expected, {"--param": "gap=0.3"})
 
 
@@ -225,16 +225,16 @@ def test_NA10860_cn(monkeypatch, solver):
         Estimated activity for *1: normal (score: 1.0); evidence: D (see https://www.pharmvar.org/haplotype/662 for details)
         Estimated activity for *4.021: none (score: 0.0); evidence: D (see https://www.pharmvar.org/haplotype/2566 for details)
     """
-    file = script_path("aldy.tests.resources/NA10860.bam")
+    file = script_path("aldy.tests.resources", "NA10860.bam")
     assert_file(monkeypatch, file, solver, expected, {"--cn": "1,1"})
 
 
 def test_NA10860_vcf_out(monkeypatch, solver):
-    file = script_path("aldy.tests.resources/NA10860.bam")
+    file = script_path("aldy.tests.resources", "NA10860.bam")
     with tmpfile(suffix=".vcf", mode="w") as out:
         out.close()
         assert_file(monkeypatch, file, solver, EXPECTED_NA10860, {"--output": out.name})
-        with open(script_path("aldy.tests.resources/NA10860.vcf.expected")) as f:
+        with open(script_path("aldy.tests.resources", "NA10860.vcf.expected")) as f:
             expected = f.read()
         with open(out.name) as f:
             produced = f.read()
@@ -279,9 +279,8 @@ def test_fusion(monkeypatch, solver):
         Estimated activity for *34: unknown
         Estimated activity for *79#10: unknown
     """
-    file = script_path("aldy.tests.resources/HARD.dump.tar.gz")
-    gene = script_path("aldy.tests.resources/cyp2d6.test.yml")
-    assert_file(monkeypatch, file, solver, expected, {"--gene": gene})
+    file = script_path("aldy.tests.resources", "HARD.dump.tar.gz")
+    assert_file(monkeypatch, file, solver, expected, {"--gene": "pharmacoscan/cyp2d6"})
 
 
 def test_fusion_off(monkeypatch, solver):
@@ -303,8 +302,7 @@ def test_fusion_off(monkeypatch, solver):
         Estimated activity for *2: unknown
         Estimated activity for *2: unknown
     """
-    file = script_path("aldy.tests.resources/HARD.dump.tar.gz")
-    gene = script_path("aldy.tests.resources/cyp2d6.test.yml")
+    file = script_path("aldy.tests.resources", "HARD.dump.tar.gz")
     assert_file(
         monkeypatch,
         file,
@@ -337,7 +335,7 @@ def test_NA07000_vcf_in(monkeypatch, solver):
         Estimated activity for *1: normal; evidence: D (see https://www.pharmvar.org/haplotype/1713 for details)
         Estimated activity for *15: none; evidence: D (see https://www.pharmvar.org/haplotype/1704 for details)
     """
-    file = script_path("aldy.tests.resources/NA07000_SLCO1B1.vcf.gz")
+    file = script_path("aldy.tests.resources", "NA07000_SLCO1B1.vcf.gz")
     assert_file(
         monkeypatch,
         file,
@@ -366,8 +364,7 @@ def test_fix_insertions(monkeypatch, solver):
         Estimated activity for *1: unknown
         Estimated activity for *40: unknown
     """
-    file = script_path("aldy.tests.resources/INS.dump.tar.gz")
-    gene = script_path("aldy.tests.resources/cyp2d6.test.yml")
+    file = script_path("aldy.tests.resources", "INS.dump.tar.gz")
     assert_file(
         monkeypatch,
         file,
@@ -407,13 +404,13 @@ def test_profile(monkeypatch, capsys):
     Scanning MT:1-2700...
     Scanning X:153756605-153781787...
     """
-    main(["profile", script_path("aldy.tests.resources/NA10860.bam")])
+    main(["profile", script_path("aldy.tests.resources", "NA10860.bam")])
     lines = "\n".join(escape_ansi(l).strip() for l in lines).strip()
     expected = "\n".join(e.strip() for e in expected.strip().split("\n"))
     assert lines == expected
 
     captured = capsys.readouterr()
-    with open(script_path("aldy.tests.resources/NA10860.profile")) as f:
+    with open(script_path("aldy.tests.resources", "NA10860.profile")) as f:
         expected = f.read()
     assert captured.out == expected
 
@@ -438,14 +435,19 @@ def test_profile(monkeypatch, capsys):
     Scanning X:154528390-154553572...
     """
     main(
-        ["profile", script_path("aldy.tests.resources/NA10860.bam"), "--genome", "hg38"]
+        [
+            "profile",
+            script_path("aldy.tests.resources", "NA10860.bam"),
+            "--genome",
+            "hg38",
+        ]
     )
     lines = "\n".join(escape_ansi(l).strip() for l in lines).strip()
     expected = "\n".join(e.strip() for e in expected.strip().split("\n"))
     assert lines == expected
 
     captured = capsys.readouterr()
-    with open(script_path("aldy.tests.resources/NA10860.profile.hg38")) as f:
+    with open(script_path("aldy.tests.resources", "NA10860.profile.hg38")) as f:
         expected = f.read()
     assert captured.out == expected
 
@@ -469,7 +471,7 @@ def test_pacbio(monkeypatch, solver):
         Estimated activity for *2: normal (score: 1.0); evidence: D (see https://www.pharmvar.org/haplotype/2549 for details)
         Estimated activity for *40: none (score: 0.0); evidence: D (see https://www.pharmvar.org/haplotype/231 for details)
     """
-    file = script_path("aldy.tests.resources/HG03166.pb.bam")
+    file = script_path("aldy.tests.resources", "HG03166.pb.bam")
     assert_file(
         monkeypatch, file, solver, expected, {"--profile": "pacbio-hifi-targeted"}
     )

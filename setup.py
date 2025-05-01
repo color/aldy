@@ -103,8 +103,6 @@ setup(
         "mappy",
         "numpy",
         "cython",
-        "setuptools; python_version>='3.12'",
-        "importlib_resources",
     ],
     entry_points={"console_scripts": ["aldy = aldy.__main__:console"]},
     packages=find_packages(),

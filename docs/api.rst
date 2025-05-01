@@ -36,7 +36,7 @@ Alternatively, we can use genes shipped with Aldy::
   import aldy.gene
   import aldy.common
 
-  gene_path = aldy.common.script_path("aldy.resources.genes/cyp2d6.yml")
+  gene_path = aldy.common.script_path("aldy.resources.genes", "cyp2d6.yml")
   gene = aldy.gene.Gene(gene_path)  # for CYP2D6
 
 

@@ -4,50 +4,39 @@
 #   file 'LICENSE', which is part of this source code package.
 
 
-from typing import List, Optional, Any, Set, Dict
+import datetime
+import importlib.resources
 import os
 import sys
-import importlib_resources
-import datetime
 import time
+from typing import Any
 
-from . import sam
-from . import cn
-from . import major
-from . import minor
-from . import diplotype
-from . import solutions
-from .common import (
-    colorize,
-    log,
-    script_path,
-    json,
-    AldyException,
-    SOLUTION_PRECISION,
-)
-from .profile import Profile
-from .gene import Gene, GRange
+from . import cn, diplotype, major, minor, sam, solutions
+from .common import SOLUTION_PRECISION, AldyException, colorize, json, log, script_path
 from .diplotype import OUTPUT_COLS
+from .gene import Gene, GRange
 from .lpinterface import model as lp_model
+from .profile import Profile
 
 
 def genotype(
     gene_db: str,
     sam_path: str,
-    profile_name: Optional[str],
-    output_file: Optional[Any] = sys.stdout,
-    cn_region: Optional[GRange] = None,
-    cn_solution: Optional[List[str]] = None,
+    profile_name: str | None,
+    output_file: Any | None = sys.stdout,
+    cn_region: GRange | None = None,
+    cn_solution: list[str] | None = None,
     solver: str = "any",
-    reference: Optional[str] = None,
-    debug: Optional[str] = None,
+    reference: str | None = None,
+    debug: str | None = None,
     multiple_warn_level: int = 1,
     report: bool = False,
     genome=None,
     is_simple: bool = False,
     **params,
-) -> Dict[str, List[solutions.MinorSolution]]:
-    """Genotype a sample.
+) -> dict[str, list[solutions.MinorSolution]]:
+    """
+    Genotype a sample.
 
     :param gene_db: Gene name (if it is shipped with Aldy)
         or the location of the gene database in YAML format.
@@ -77,7 +66,6 @@ def genotype(
         Default: `False`.
     :param params: Model parameters. See :py:mod:`aldy.profile` for details.
     """
-
     t1 = time.time()
     log.debug("[genotype] gene={}; start={}", gene_db, datetime.datetime.now())
 
@@ -98,17 +86,31 @@ def genotype(
 
     avail_genes = []
     if gene_db == "all":
-        avail_genes = importlib_resources.files("aldy.resources.genes").iterdir()
+        avail_genes = [
+            p.as_posix()
+            for p in importlib.resources.files("aldy.resources.genes").iterdir()
+        ]
         avail_genes = [
             i.name[:-4]
             for i in avail_genes
-            if len(i.name) > 4 and i.name.endswith(".yml") and not i.name.startswith("pharma-")
+            if len(i) > 4 and i.endswith(".yml") and not i.startswith("pharma-")
+        ]
+        avail_genes = sorted(avail_genes)
+    elif gene_db == "pharmacoscan":
+        avail_genes = [
+            p.as_posix()
+            for p in importlib.resources.files(
+                "aldy.resources.genes.pharmacoscan"
+            ).iterdir()
+        ]
+        avail_genes = [
+            f"pharmacoscan/{i[:-4]}" for i in avail_genes if i.endswith(".yml")
         ]
         avail_genes = sorted(avail_genes)
     else:
         avail_genes = gene_db.lower().split(",")
     if len(avail_genes) != 1:
-        res: Dict = {}
+        res: dict = {}
         for a in avail_genes:
             log.warn("=" * 50)
             log.warn("Gene {}", a.upper())
@@ -134,13 +136,10 @@ def genotype(
                 }
             except AldyException as ex:
                 log.error(f"Failed gene {a.upper()}")
-                log.error(f"Message: {str(ex)}")
+                log.error(f"Message: {ex!s}")
             log.warn("")
         return res
-    else:
-        db_file = script_path(
-            "aldy.resources.genes/{}.yml".format(avail_genes[0].lower())
-        )
+    db_file = script_path("aldy.resources.genes", f"{avail_genes[0].lower()}.yml")
 
     # Load the gene specification
     if os.path.exists(db_file):
@@ -202,13 +201,13 @@ def genotype(
                 print(file=output_file)
             raise AldyException(
                 f"Average coverage of {avg_cov:.2f} for gene {gene.name} is too low; "
-                + f"skipping gene {gene.name}. "
-                + f"Please ensure that {gene.name} is present in the input SAM/BAM."
+                f"skipping gene {gene.name}. "
+                f"Please ensure that {gene.name} is present in the input SAM/BAM."
             )
-        elif profile.cn_region and avg_cov < 20:
+        if profile.cn_region and avg_cov < 20:
             log.warn(
                 f"Average sample coverage is {avg_cov}. "
-                + "We recommend at least 20x coverage for the best results."
+                "We recommend at least 20x coverage for the best results."
             )
 
     # Get copy-number solutions
@@ -311,10 +310,10 @@ def genotype(
             print(file=output_file)
         raise AldyException(
             "Aldy could not phase any major solution.\n"
-            + "Possible solutions:\n"
-            + " - Check the coverage. Extremely low coverage prevents Aldy from "
-            + "calling star-alleles.\n"
-            + " - Run with --debug parameter and notify the authors of Aldy."
+            "Possible solutions:\n"
+            " - Check the coverage. Extremely low coverage prevents Aldy from "
+            "calling star-alleles.\n"
+            " - Run with --debug parameter and notify the authors of Aldy."
         )
     min_minor_score = min(minor_sols, key=lambda m: m.score).score
     minor_sols = sorted(
@@ -339,8 +338,7 @@ def genotype(
     for i, minor_sol in enumerate(minor_sols):
         conf = 100 * (min_minor_score + SLACK) / (minor_sol.score + SLACK)
         log.info(
-            f"  {i + 1:2}: {minor_sol.get_major_diplotype()}"
-            + f" (confidence={conf:.0f}%)"
+            f"  {i + 1:2}: {minor_sol.get_major_diplotype()} (confidence={conf:.0f}%)"
         )
         log.info(f"      Minor alleles: {minor_sol._solution_nice()}")
         simple += [
@@ -371,7 +369,7 @@ def genotype(
 
     if report:
         log.info(colorize(f"{gene.name} results:"))
-        reported: Set[str] = set()
+        reported: set[str] = set()
         for r in minor_sols:
             st = f"  - {r.get_major_diplotype()}"
             if st not in reported:

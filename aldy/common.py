@@ -4,15 +4,16 @@
 #   file 'LICENSE', which is part of this source code package.
 
 
-from typing import Iterable, Any, List
-import importlib_resources
-import re
-import time
-import pprint
-import logbook
-import textwrap
 import collections
+import importlib.resources
+import pprint
+import re
+import textwrap
+import time
+from collections.abc import Iterable
+from typing import Any
 
+import logbook
 
 PROTEINS = {
     "TTT": "F",
@@ -101,22 +102,19 @@ precision are considered equal).
 class AldyException(Exception):
     """Aldy exception class."""
 
-    pass
-
 
 class GRange(collections.namedtuple("GRange", ["chr", "start", "end"])):
     """Reference genome range (e.g. `chr22:10-20`). Immutable."""
 
     def samtools(self, pad_left=500, pad_right=1, prefix="") -> str:
-        """Samtools-compatible region representation (e.g. chr1:10-20).
+        """
+        Samtools-compatible region representation (e.g. chr1:10-20).
 
         :param pad_left: Left padding.
         :param pad_right: Right padding.
-        :param prefix: Chromosome prefix."""
-
-        return "{}:{}-{}".format(
-            prefix + self.chr, max(1, self.start - pad_left), self.end + pad_right
-        )
+        :param prefix: Chromosome prefix.
+        """
+        return f"{prefix + self.chr}:{max(1, self.start - pad_left)}-{self.end + pad_right}"
 
     def __str__(self):
         return self.samtools(0, 0, "")
@@ -131,13 +129,11 @@ def allele_name(x: str) -> str:
 
 def rev_comp(seq: str) -> str:
     """:returns: Reverse-complemented DNA sequence."""
-
     return "".join([REV_COMPLEMENT.get(x, x) for x in seq[::-1]])
 
 
 def seq_to_amino(seq: str) -> str:
     """:returns: Protein sequence formed from the provided DNA sequence."""
-
     return "".join(
         PROTEINS[seq[i : i + 3]] for i in range(0, len(seq) - len(seq) % 3, 3)
     )
@@ -172,7 +168,7 @@ class Timing:
 
     def __init__(self, name="Block", fn=None):
         self.name = name
-        self.fn = fn if fn else log.debug
+        self.fn = fn or log.debug
 
     def __enter__(self):
         self.start = time.time()
@@ -185,11 +181,10 @@ class Timing:
 
 def pp(x) -> str:
     """:returns: Pretty-printed variable string."""
-
     return pprint.pformat(x)
 
 
-def script_path(key: str) -> str:
+def script_path(module: str, resource: str) -> str:
     """
     Obtain the full path of a resource.
 
@@ -197,17 +192,12 @@ def script_path(key: str) -> str:
     :param key: resource to be extracted in `path/file` format
         (e.g., `aldy.resources/test.txt`).
     :returns: Full path of the resource.
-    :raises: :py:class:`aldy.common.AldyException` if the resource does not exist.
     """
-    components = key.split("/")
-    if len(components) < 2:
-        raise AldyException(f'"{key}"" is not valid resource name')
-    return str(importlib_resources.files(components[0]) / "/".join(components[1:]))
+    return (importlib.resources.files(module) / resource).as_posix()
 
 
 def colorize(text: str, color: str = "green") -> str:
     """:returns: xterm-compatible colorized string with a given color."""
-
     import logbook._termcolors
 
     return logbook._termcolors.colorize(color, text)
@@ -224,16 +214,15 @@ def parse_cn_region(cn_region):
         if not r:
             raise AldyException(
                 f"Parameter --cn-neutral={cn_region} cannot be parsed. "
-                + "Must be chr:start-end (where start and end are numbers)"
+                "Must be chr:start-end (where start and end are numbers)"
             )
         ch = r.group(1)
-        if ch.startswith("chr"):
-            ch = ch[3:]
+        ch = ch.removeprefix("chr")
         return GRange(ch, int(r.group(2)), int(r.group(3)))
     return None
 
 
-def chr_prefix(ch: str, chrs: List[str]) -> str:
+def chr_prefix(ch: str, chrs: list[str]) -> str:
     """
     Check if a chromosome needs "chr" prefix given the available chromosomes.
     :returns: Chromosome prefix if the chromosome does not have it.

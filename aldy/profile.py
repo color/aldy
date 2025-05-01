@@ -4,15 +4,16 @@
 #   file 'LICENSE', which is part of this source code package.
 
 
-from typing import Dict, List, Tuple, Optional
-import pysam
+import importlib.resources
 import os
 import os.path
-import yaml
-
 from collections import defaultdict
+
+import pysam
+import yaml
 from natsort import natsorted
-from .common import log, GRange, AldyException, script_path, chr_prefix
+
+from .common import AldyException, GRange, chr_prefix, log, script_path
 from .gene import Gene
 
 
@@ -230,7 +231,7 @@ class Profile:
                 else:
                     try:
                         if isinstance(self.__dict__[n], bool):
-                            self.__dict__[n] = not (v in ["False", "0"])
+                            self.__dict__[n] = v not in ["False", "0"]
                         else:
                             typ = type(self.__dict__[n])
                             self.__dict__[n] = typ(v)
@@ -274,7 +275,7 @@ class Profile:
                     prof = yaml.safe_load(f)
         else:
             profile_path = script_path(
-                "aldy.resources.profiles/{}.yml".format(profile.lower())
+                "aldy.resources.profiles", f"{profile.lower()}.yml"
             )
             with open(profile_path) as f:
                 prof = yaml.safe_load(f)
@@ -304,12 +305,12 @@ class Profile:
     @staticmethod
     def get_sam_profile_data(
         sam_path: str,
-        ref_path: Optional[str] = None,
-        regions: Dict[Tuple[str, str, int], GRange] = dict(),
-        cn_region: Optional[GRange] = None,
-        genome: Optional[str] = "hg19",
-        params: Dict = dict(),
-    ) -> Dict[str, Dict[str, List[float]]]:
+        ref_path: str | None = None,
+        regions: dict[tuple[str, str, int], GRange] = dict(),
+        cn_region: GRange | None = None,
+        genome: str | None = "hg19",
+        params: dict = dict(),
+    ) -> dict[str, dict[str, list[float]]]:
         """
         Load the profile information from a SAM/BAM/CRAM file.
 
@@ -326,27 +327,19 @@ class Profile:
                 2. PGRNseq-v2: NA19789
                 3. Illumina: by definition contains all ones (uniform coverage).
         """
-
         if not genome:
             genome = "hg19"
         if len(regions) == 0:
-            import importlib_resources
-
             gene_regions = {}
-            for g in sorted(
-                importlib_resources.files("aldy.resources.genes").iterdir()
-            ):
-                if g.suffix != ".yml":
+            for f in sorted(list(importlib.resources.files("aldy.resources.genes"))):
+                g = f.as_posix()
+                if not g.endswith(".yml"):
                     continue
                 log.debug("Loading {}...", g)
-                try:
-                    gg = Gene(script_path(f"aldy.resources.genes/{g}"), genome=genome)
-                    for gi, gr in enumerate(gg.regions):
-                        for r, rng in gr.items():
-                            gene_regions[gg.name, r, gi] = rng
-                except AldyException as e:
-                    log.warn(e)
-
+                gg = Gene(script_path("aldy.resources.genes", f"{g}"), genome=genome)
+                for gi, gr in enumerate(gg.regions):
+                    for r, rng in gr.items():
+                        gene_regions[gg.name, r, gi] = rng
         else:
             gene_regions = regions
 
@@ -355,10 +348,10 @@ class Profile:
             "hg38": GRange("22", 42151472, 42152258),
         }
         gene_regions["neutral", "value", 0] = (
-            cn_region if cn_region else default_cn_neutral_region[genome]
+            cn_region or default_cn_neutral_region[genome]
         )
 
-        chr_regions: Dict[str, Tuple[int, int]] = {}
+        chr_regions: dict[str, tuple[int, int]] = {}
         for c, s, e in gene_regions.values():
             if c not in chr_regions:
                 chr_regions[c] = (s, e)
@@ -389,9 +382,7 @@ class Profile:
                                 for i in range(size):
                                     cov[c][start + i] += 1
                                 start += size
-                            elif op == 1:
-                                s_start += size
-                            elif op == 4:
+                            elif op == 1 or op == 4:
                                 s_start += size
                             elif op in [0, 7, 8]:
                                 for i in range(size):
@@ -401,7 +392,7 @@ class Profile:
                 except ValueError:
                     log.warn("Cannot fetch {}", region)
 
-        d: Dict = {}
+        d: dict = {}
         for (g, r, ri), (c, s, e) in gene_regions.items():
             if g not in d:
                 d[g] = {}

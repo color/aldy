@@ -14,7 +14,9 @@ from aldy.version import __version__
 from .test_full import HEADER, escape_ansi
 
 
-def assert_show(monkeypatch, expected, query=None, gene="aldy.tests.resources/toy.yml"):
+def assert_show(
+    monkeypatch, expected, query=None, gene=("aldy.tests.resources", "toy.yml")
+):
     lines = []
 
     def log_info(*args):
@@ -23,7 +25,7 @@ def assert_show(monkeypatch, expected, query=None, gene="aldy.tests.resources/to
 
     monkeypatch.setattr(log, "info", log_info)
 
-    args = ["q", script_path(gene)]
+    args = ["q", script_path(gene[0], gene[1])]
     if query:
         args[1] += "*" + query
     main(args)
@@ -162,4 +164,6 @@ Gene CYP2D6, structural allele CYP2D6*13:
 
 
 def test_show_cn(monkeypatch):
-    assert_show(monkeypatch, EXPECTED_SHOW_CN, "13", "aldy.resources.genes/cyp2d6.yml")
+    assert_show(
+        monkeypatch, EXPECTED_SHOW_CN, "13", ("aldy.resources.genes", "cyp2d6.yml")
+    )

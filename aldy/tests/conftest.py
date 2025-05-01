@@ -12,12 +12,12 @@ from aldy.common import script_path
 
 @pytest.fixture
 def toy_gene():
-    return Gene(script_path("aldy.tests.resources/toy.yml"))
+    return Gene(script_path("aldy.tests.resources", "toy.yml"))
 
 
 @pytest.fixture
 def real_gene():
-    return Gene(script_path("aldy.resources.genes/cyp2d6.yml"))
+    return Gene(script_path("aldy.resources.genes", "cyp2d6.yml"))
 
 
 def pytest_addoption(parser):
