@@ -276,9 +276,11 @@ class Gene:
             if self.seq[pos] != op[0]:
                 log.warn(f"Bad mutation: {op[0]} != {self.seq[pos]}")
             seq = "".join(
-                self.seq[s:pos] + op[2] + self.seq[pos + 1 : e]
-                if s <= pos < e
-                else self.seq[s:e]
+                (
+                    self.seq[s:pos] + op[2] + self.seq[pos + 1 : e]
+                    if s <= pos < e
+                    else self.seq[s:e]
+                )
                 for s, e in self.exons
             )
             amino = seq_to_amino(seq)
@@ -428,12 +430,14 @@ class Gene:
         self._lookup_range = (start - 1, end - 1)
         self._lookup_seq = "".join(
             (
-                rev_comp(self.seq[self.chr_to_ref[i]])
-                if self.strand < 0
-                else self.seq[self.chr_to_ref[i]]
+                (
+                    rev_comp(self.seq[self.chr_to_ref[i]])
+                    if self.strand < 0
+                    else self.seq[self.chr_to_ref[i]]
+                )
+                if i in self.chr_to_ref
+                else "N"
             )
-            if i in self.chr_to_ref
-            else "N"
             for i in range(*self._lookup_range)
         )
 

@@ -31,11 +31,15 @@ from .version import __version__
 def get_version():
     return "{} {}".format(
         platform.system() if platform.system() != "Darwin" else "macOS",
-        platform.platform()[6:]
-        if platform.system() == "Linux"
-        else platform.mac_ver()[0]
-        if platform.system() == "Darwin"
-        else platform.platform(),
+        (
+            platform.platform()[6:]
+            if platform.system() == "Linux"
+            else (
+                platform.mac_ver()[0]
+                if platform.system() == "Darwin"
+                else platform.platform()
+            )
+        ),
     )
 
 
@@ -87,7 +91,7 @@ def main(argv):
                 gene, q = q, ""
             if args.gene:
                 gene = args.gene
-            db_file = script_path("aldy.resources.genes/{}.yml".format(gene.lower()))
+            db_file = script_path("aldy.resources.genes", "{}.yml".format(gene.lower()))
             if not os.path.exists(db_file):
                 db_file = gene
             with open(db_file):  # Check if file exists
@@ -341,7 +345,7 @@ def _print_licence():
     """
     Print Aldy license.
     """
-    with open(script_path("aldy.resources/LICENSE.rst")) as f:
+    with open(script_path("aldy.resources", "LICENSE.rst")) as f:
         for ll in f:
             print(ll.strip())
 
@@ -410,7 +414,10 @@ def _genotype(gene: str, output: Optional[Any], args) -> None:
 
     if args.log:
         fh = logbook.FileHandler(
-            args.log, mode="w", bubble=True, level="TRACE"  # type: ignore
+            args.log,
+            mode="w",
+            bubble=True,
+            level="TRACE",  # type: ignore
         )
         fh.formatter = lambda record, _: record.message  # type: ignore
         fh.push_application()
@@ -421,7 +428,10 @@ def _genotype(gene: str, output: Optional[Any], args) -> None:
                 prefix = f"{tmp}/{os.path.splitext(os.path.basename(args.file))[0]}"
                 log_output = f"{prefix}.log"
                 fh = logbook.FileHandler(
-                    log_output, mode="w", bubble=True, level="TRACE"  # type: ignore
+                    log_output,
+                    mode="w",
+                    bubble=True,
+                    level="TRACE",  # type: ignore
                 )
                 fh.formatter = lambda record, _: "[{}:{}/{}] {}".format(  # type: ignore
                     record.level_name[0],

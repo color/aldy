@@ -5,6 +5,7 @@
 
 
 from typing import Dict, List, Tuple, Optional
+import importlib.resources
 import pysam
 import os
 import os.path
@@ -274,7 +275,7 @@ class Profile:
                     prof = yaml.safe_load(f)
         else:
             profile_path = script_path(
-                "aldy.resources.profiles/{}.yml".format(profile.lower())
+                "aldy.resources.profiles", "{}.yml".format(profile.lower())
             )
             with open(profile_path) as f:
                 prof = yaml.safe_load(f)
@@ -330,14 +331,13 @@ class Profile:
         if not genome:
             genome = "hg19"
         if len(regions) == 0:
-            import pkg_resources
-
             gene_regions = {}
-            for g in sorted(pkg_resources.resource_listdir("aldy.resources", "genes")):
+            for f in sorted(list(importlib.resources.files("aldy.resources.genes"))):
+                g = f.as_posix()
                 if not g.endswith(".yml"):
                     continue
                 log.debug("Loading {}...", g)
-                gg = Gene(script_path(f"aldy.resources.genes/{g}"), genome=genome)
+                gg = Gene(script_path("aldy.resources.genes", f"{g}"), genome=genome)
                 for gi, gr in enumerate(gg.regions):
                     for r, rng in gr.items():
                         gene_regions[gg.name, r, gi] = rng

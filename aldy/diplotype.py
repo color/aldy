@@ -176,15 +176,19 @@ def write_vcf(
                     "GT": "|".join(str(all_mutations[m][mi][i]) for i in range(nall)),
                     "DP": str(coverage[m]),
                     "MA": ",".join(
-                        f"*{minor.solution[i].major}"
-                        if all_mutations[m][mi][i] > 0
-                        else "-"
+                        (
+                            f"*{minor.solution[i].major}"
+                            if all_mutations[m][mi][i] > 0
+                            else "-"
+                        )
                         for i in range(nall)
                     ),
                     "MI": ",".join(
-                        f"*{minor.solution[i].minor}"
-                        if all_mutations[m][mi][i] > 0
-                        else "-"
+                        (
+                            f"*{minor.solution[i].minor}"
+                            if all_mutations[m][mi][i] > 0
+                            else "-"
+                        )
                         for i in range(nall)
                     ),
                 }
