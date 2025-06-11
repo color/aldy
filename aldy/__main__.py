@@ -17,7 +17,6 @@ import yaml
 import datetime
 import tempfile
 import traceback
-import pytest
 
 from . import common
 from .common import log, script_path, AldyException, td, parse_cn_region
@@ -457,6 +456,7 @@ def _run_test() -> None:
     """
     Run the Aldy test suite.
     """
+    import pytest
 
     pytest.main(["--pyargs", "aldy"])
 
