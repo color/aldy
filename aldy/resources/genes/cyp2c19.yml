@@ -365,15 +365,6 @@ alleles:
       - [5124, C>T, rs17885098]
       - [24178, C>T, rs6413438, P227L]
       - [85186, A>G, rs3758581, I331V]
-  CYP2C19*11.001:
-    pharmvar: https://www.pharmvar.org/haplotype/100
-    activity: normal function
-    label: CYP2C19*11
-    evidence: M
-    mutations:
-      - [5124, C>T, rs17885098]
-      - [17827, G>A, rs58973490, R150H]
-      - [85186, A>G, rs3758581, I331V]
   CYP2C19*12.001:
     pharmvar: https://www.pharmvar.org/haplotype/90
     activity: uncertain function
