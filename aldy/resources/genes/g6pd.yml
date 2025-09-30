@@ -95,12 +95,6 @@ alleles:
     activity: III/Deficient
     mutations:
       - [18977, G>C, rs137852318, D282Y]
-  G6PD*sierra_leone:
-    label: Sierra Leone
-    activity: Not reported/Unknown
-    mutations:
-      - [17231, G>A, rs181277621, R104H]
-      - [17296, A>G, rs1050829, N126D]
   G6PD*ube_konan:
     label: Ube Konan
     activity: III/Deficient
